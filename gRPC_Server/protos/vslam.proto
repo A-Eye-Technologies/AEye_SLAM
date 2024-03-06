@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package vslam;
+
+import "google/protobuf/timestamp.proto";
+
+service Vslam {
+  // Send a sequence of percepts to be processed by the VSLAM service
+  //
+  // Here the server is the VSLAM and the client is Nest
+  rpc ProcessPercepts(stream Percept) returns (Response);
+}
+
+message Percept { 
+  oneof percept_type {
+    Frame frame = 1;
+    IMU imu = 2;
+  }
+}
+
+message Frame {
+  // The timestamp associated with the frame. 
+  google.protobuf.Timestamp timestamp = 1;
+  // 8-bit RGB image in PNG format.
+  bytes rgb_image = 2;
+  // 16-bit monochrome image in PNG format.
+  bytes depth_image = 3;
+}
+
+message IMU {
+  google.protobuf.Timestamp timestamp = 1;
+  AccelerometerData accelerometer_data = 2;
+  GyroscopeData gyroscope_data = 3;
+}
+
+message AccelerometerData {
+  double ax = 1; // acceleration in x-axis
+  double ay = 2; // acceleration in y-axis
+  double az = 3; // acceleration in z-axis
+}
+
+message GyroscopeData {
+  double vx = 1; // angular velocity in x-axis
+  double vy = 2; // angular velocity in y-axis
+  double vz = 3; // angular velocity in z-axis
+}
+
+message Response {
+  // To be defined later
+  // A response is not required so far
+}
+
+// message Frame {
+//   double timestamp = 1;
+
+//   // The path to the frame RGB image (e.g., rgb/frame_timestamp.png)
+//   string rgb_path = 2;
+
+//   // The path to the frame depth map (e.g., depth/frame_timestamp.png)
+//   string depth_path = 3;
+// }
